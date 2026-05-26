@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Word数式ペースト変換</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="workspace">
+        <div class="pane input-pane">
+          <div class="pane-header">
+            <div>
+              <h1>Word数式ペースト変換</h1>
+              <p>Geminiの回答を貼ると、Wordに貼りやすい形へ整えます。</p>
+            </div>
+            <button class="icon-button" id="clearButton" type="button" title="入力を消す" aria-label="入力を消す">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v5"/><path d="M14 11v5"/></svg>
+            </button>
+          </div>
+          <textarea id="sourceText" spellcheck="false" placeholder="ここにGeminiの回答をそのまま貼り付け"></textarea>
+          <div class="actions">
+            <button class="primary-button" id="convertButton" type="button">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 7H3"/><path d="M18 3l4 4-4 4"/><path d="M3 17h18"/><path d="M6 13l-4 4 4 4"/></svg>
+              変換
+            </button>
+            <button class="secondary-button" id="sampleButton" type="button">サンプル</button>
+          </div>
+        </div>
+
+        <div class="pane output-pane">
+          <div class="pane-header compact">
+            <div>
+              <h2>変換結果</h2>
+              <p id="statusText">入力すると自動でプレビューします。</p>
+            </div>
+            <div class="copy-actions">
+              <button class="icon-button" id="copyHtmlButton" type="button" title="Wordにコピー" aria-label="Wordにコピー">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><rect x="2" y="2" width="13" height="13" rx="2"/></svg>
+              </button>
+              <button class="icon-button" id="copyTextButton" type="button" title="文字だけコピー" aria-label="文字だけコピー">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7V4h16v3"/><path d="M9 20h6"/><path d="M12 4v16"/></svg>
+              </button>
+            </div>
+          </div>
+          <article id="preview" class="preview empty">変換後の文章がここに表示されます。</article>
+          <div id="warnings" class="warnings" hidden></div>
+        </div>
+      </section>
+    </main>
+
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+  </body>
+</html>

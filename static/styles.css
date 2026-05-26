@@ -1,0 +1,231 @@
+:root {
+  color-scheme: light;
+  --bg: #f5f7f2;
+  --panel: #ffffff;
+  --ink: #17201b;
+  --muted: #667069;
+  --line: #dce2dc;
+  --accent: #126d5b;
+  --accent-dark: #0d5144;
+  --soft: #edf5f1;
+  --warn: #8a4d0b;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: "Yu Gothic", "Meiryo", system-ui, sans-serif;
+}
+
+button,
+textarea {
+  font: inherit;
+}
+
+.app-shell {
+  width: min(1480px, 100%);
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.workspace {
+  display: grid;
+  grid-template-columns: minmax(360px, 0.95fr) minmax(420px, 1.05fr);
+  gap: 18px;
+  min-height: calc(100vh - 48px);
+}
+
+.pane {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  box-shadow: 0 18px 45px rgba(32, 47, 38, 0.08);
+}
+
+.pane-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px;
+  border-bottom: 1px solid var(--line);
+}
+
+.pane-header.compact {
+  align-items: center;
+}
+
+h1,
+h2,
+p {
+  margin: 0;
+}
+
+h1 {
+  font-size: clamp(20px, 2vw, 28px);
+  line-height: 1.25;
+}
+
+h2 {
+  font-size: 18px;
+}
+
+.pane-header p {
+  color: var(--muted);
+  margin-top: 6px;
+  font-size: 14px;
+}
+
+textarea {
+  width: 100%;
+  flex: 1;
+  min-height: 420px;
+  resize: none;
+  border: 0;
+  outline: none;
+  padding: 18px;
+  color: var(--ink);
+  line-height: 1.7;
+  background: #fbfcfa;
+}
+
+.actions,
+.copy-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.actions {
+  padding: 14px 18px;
+  border-top: 1px solid var(--line);
+}
+
+button {
+  border: 1px solid transparent;
+  border-radius: 7px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 40px;
+  transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+}
+
+button:active {
+  transform: translateY(1px);
+}
+
+svg {
+  width: 19px;
+  height: 19px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  flex: 0 0 auto;
+}
+
+.primary-button {
+  background: var(--accent);
+  color: white;
+  padding: 0 18px;
+}
+
+.primary-button:hover {
+  background: var(--accent-dark);
+}
+
+.secondary-button,
+.icon-button {
+  background: var(--soft);
+  border-color: #d3e3dc;
+  color: var(--accent-dark);
+}
+
+.secondary-button {
+  padding: 0 16px;
+}
+
+.icon-button {
+  width: 42px;
+  height: 42px;
+  padding: 0;
+}
+
+.preview {
+  flex: 1;
+  min-height: 420px;
+  overflow: auto;
+  padding: 22px;
+  line-height: 1.75;
+  background: #fff;
+}
+
+.preview.empty {
+  color: var(--muted);
+  display: grid;
+  place-items: center;
+  text-align: center;
+}
+
+.preview p {
+  margin: 0 0 12px;
+}
+
+.preview h2 {
+  font-size: 17px;
+  margin: 18px 0 8px;
+}
+
+.preview .equation.display {
+  text-align: center;
+  margin: 18px 0;
+  overflow-x: auto;
+}
+
+.preview math {
+  font-family: "Cambria Math", "Times New Roman", serif;
+  font-size: 1.12em;
+}
+
+.warnings {
+  white-space: pre-wrap;
+  padding: 12px 18px;
+  border-top: 1px solid #f0d8b8;
+  color: var(--warn);
+  background: #fff8ed;
+  font-size: 14px;
+}
+
+@media (max-width: 880px) {
+  .app-shell {
+    padding: 12px;
+  }
+
+  .workspace {
+    grid-template-columns: 1fr;
+    min-height: auto;
+  }
+
+  .pane {
+    min-height: 58vh;
+  }
+
+  textarea,
+  .preview {
+    min-height: 340px;
+  }
+}
