@@ -13,7 +13,7 @@
           <div class="pane-header">
             <div>
               <h1>Word数式ペースト変換</h1>
-              <p>Geminiの回答を貼ると、Wordに貼りやすい形へ整えます。</p>
+              <p>Geminiの回答を貼ると、Word向けの文章・数式・波形に整えます。</p>
             </div>
             <button class="icon-button" id="clearButton" type="button" title="入力を消す" aria-label="入力を消す">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v5"/><path d="M14 11v5"/></svg>
@@ -45,6 +45,23 @@
             </div>
           </div>
           <article id="preview" class="preview empty">変換後の文章がここに表示されます。</article>
+          <section class="graph-panel" id="graphPanel" hidden>
+            <div class="graph-header">
+              <div>
+                <h2>波形グラフ</h2>
+                <p id="graphStatus">計算結果から自動生成します。</p>
+              </div>
+              <div class="copy-actions">
+                <button class="icon-button" id="copyGraphButton" type="button" title="グラフをコピー" aria-label="グラフをコピー">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 16l3-3 2 2 5-6"/></svg>
+                </button>
+                <button class="icon-button" id="downloadGraphButton" type="button" title="PNG保存" aria-label="PNG保存">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>
+                </button>
+              </div>
+            </div>
+            <canvas id="graphCanvas" width="900" height="520"></canvas>
+          </section>
           <div id="warnings" class="warnings" hidden></div>
         </div>
       </section>

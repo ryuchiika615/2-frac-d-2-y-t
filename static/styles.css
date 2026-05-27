@@ -52,7 +52,8 @@ textarea {
   box-shadow: 0 18px 45px rgba(32, 47, 38, 0.08);
 }
 
-.pane-header {
+.pane-header,
+.graph-header {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
@@ -61,7 +62,8 @@ textarea {
   border-bottom: 1px solid var(--line);
 }
 
-.pane-header.compact {
+.pane-header.compact,
+.graph-header {
   align-items: center;
 }
 
@@ -80,7 +82,8 @@ h2 {
   font-size: 18px;
 }
 
-.pane-header p {
+.pane-header p,
+.graph-header p {
   color: var(--muted);
   margin-top: 6px;
   font-size: 14px;
@@ -167,7 +170,7 @@ svg {
 
 .preview {
   flex: 1;
-  min-height: 420px;
+  min-height: 300px;
   overflow: auto;
   padding: 22px;
   line-height: 1.75;
@@ -199,6 +202,23 @@ svg {
 .preview math {
   font-family: "Cambria Math", "Times New Roman", serif;
   font-size: 1.12em;
+}
+
+.graph-panel {
+  border-top: 1px solid var(--line);
+  background: #fbfcfa;
+}
+
+.graph-panel[hidden] {
+  display: none;
+}
+
+#graphCanvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 45 / 26;
+  background: white;
 }
 
 .warnings {

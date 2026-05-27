@@ -116,8 +116,8 @@ def text_to_html(text: str) -> str:
             continue
 
         heading_match = re.fullmatch(r"【(.+?)】", stripped)
-        answer_match = re.fullmatch(r"(問\d+.*|\(\d+\).*)", stripped)
-        if heading_match or answer_match:
+        question_match = re.fullmatch(r"(問\d+.*|\(\d+\).*)", stripped)
+        if heading_match or question_match:
             flush_paragraph()
             out.append(f"<h2>{stripped}</h2>")
         else:
@@ -162,6 +162,7 @@ def convert_to_word_html(source: str) -> dict[str, str | list[str]]:
     p {{ margin: 0 0 8pt; }}
     h2 {{ font-size: 12pt; margin: 12pt 0 6pt; font-weight: 700; }}
     .equation.display {{ text-align: center; margin: 10pt 0 12pt; }}
+    .wave-image {{ display: block; width: 520px; max-width: 100%; margin: 14pt auto; }}
     math {{ font-family: Cambria Math, serif; }}
     code {{ font-family: Consolas, monospace; background: #f2f2f2; padding: 1pt 3pt; }}
   </style>
@@ -195,4 +196,5 @@ def convert():
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port, debug=True)
+    debug = os.environ.get("FLASK_DEBUG") == "1"
+    app.run(host="0.0.0.0", port=port, debug=debug, use_reloader=debug)
