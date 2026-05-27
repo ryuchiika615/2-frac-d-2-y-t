@@ -273,7 +273,9 @@ function drawGraph(fn, expression) {
   const height = graphCanvas.height;
   const pad = { left: 70, right: 26, top: 36, bottom: 58 };
   const tMin = 0;
-  const tMax = chooseTimeMax(expression);
+  const rate = extractDecayRate(expression);
+  const tau = rate ? 1 / rate : null;
+  const tMax = chooseTimeMax(rate);
   const samples = [];
 
   for (let i = 0; i <= 360; i += 1) {
@@ -305,7 +307,8 @@ function drawGraph(fn, expression) {
   ctx.fillStyle = "#ffffff";
   ctx.fillRect(0, 0, width, height);
 
-  drawGrid(ctx, width, height, pad, tMin, tMax, yMin, yMax, x, y);
+  const tauPoint = tau ? { t: Number(tau.toFixed(3)), y: fn(tau) } : null;
+  drawGrid(ctx, width, height, pad, tMin, tMax, yMin, yMax, x, y, tauPoint);
   drawAsymptote(ctx, x, y, tMin, tMax, yFinal);
 
   ctx.beginPath();
@@ -322,9 +325,9 @@ function drawGraph(fn, expression) {
   ctx.lineWidth = 4;
   ctx.stroke();
 
-  const tauPoint = findTauPoint(fn, expression);
-  if (tauPoint) {
-    drawPoint(ctx, x(tauPoint.t), y(tauPoint.y), `(${tauPoint.t}, ${tauPoint.y.toFixed(3)})`);
+  if (tauPoint && Number.isFinite(tauPoint.y)) {
+    drawTauGuide(ctx, x(tauPoint.t), y(tauPoint.y), y(0), y(yFinal));
+    drawPoint(ctx, x(tauPoint.t), y(tauPoint.y), `t=${tauPoint.t}s, y=${tauPoint.y.toFixed(3)}`);
   }
 
   ctx.fillStyle = "#17201b";
@@ -336,60 +339,54 @@ function drawGraph(fn, expression) {
   ctx.fillText("y(t)", pad.left - 54, pad.top + 8);
 }
 
-function chooseTimeMax(expression) {
-  const match = expression.match(/e\^\(?-?(\d+(?:\.\d+)?)t/i) || expression.match(/exp\(-?(\d+(?:\.\d+)?)t/i);
-  if (!match) {
+function chooseTimeMax(rate) {
+  if (!rate) {
     return 8;
+  }
+  return Math.min(Math.max(6 / rate, 3), 8);
+}
+
+function extractDecayRate(expression) {
+  const compact = expression.replace(/\s+/g, "");
+  const match =
+    compact.match(/e\^\{?-?(\d+(?:\.\d+)?)\*?t\}?/i) ||
+    compact.match(/e\^\(-?(\d+(?:\.\d+)?)\*?t\)/i) ||
+    compact.match(/exp\(-?(\d+(?:\.\d+)?)\*?t\)/i);
+  if (!match) {
+    return null;
   }
   const rate = Number(match[1]);
   if (!Number.isFinite(rate) || rate <= 0) {
-    return 8;
+    return null;
   }
-  return Math.min(Math.max(6 / rate, 3), 12);
+  return rate;
 }
 
-function findTauPoint(fn, expression) {
-  const match = expression.match(/e\^\(?-?(\d+(?:\.\d+)?)t/i) || expression.match(/exp\(-?(\d+(?:\.\d+)?)t/i);
-  if (!match) {
-    return null;
-  }
-  const rate = Number(match[1]);
-  if (!Number.isFinite(rate) || rate <= 0) {
-    return null;
-  }
-  const t = 1 / rate;
-  const y = fn(t);
-  if (!Number.isFinite(y)) {
-    return null;
-  }
-  return { t: Number(t.toFixed(3)), y };
-}
-
-function drawGrid(ctx, width, height, pad, tMin, tMax, yMin, yMax, x, y) {
+function drawGrid(ctx, width, height, pad, tMin, tMax, yMin, yMax, x, y, tauPoint) {
   ctx.strokeStyle = "#dce2dc";
   ctx.lineWidth = 1;
   ctx.font = "15px Yu Gothic, Meiryo, sans-serif";
   ctx.fillStyle = "#667069";
 
-  for (let i = 0; i <= 6; i += 1) {
-    const t = tMin + (tMax - tMin) * (i / 6);
+  const xTicks = buildTicks(tMin, tMax, tauPoint ? tauPoint.t : null);
+  xTicks.forEach((t) => {
     const px = x(t);
     ctx.beginPath();
     ctx.moveTo(px, pad.top);
     ctx.lineTo(px, height - pad.bottom);
     ctx.stroke();
     ctx.fillText(formatTick(t), px - 12, height - pad.bottom + 28);
-  }
+  });
 
-  for (let i = 0; i <= 5; i += 1) {
-    const value = yMin + (yMax - yMin) * (i / 5);
+  const yTicks = buildTicks(yMin, yMax, tauPoint ? tauPoint.y : null, 1);
+  yTicks.forEach((value) => {
     const py = y(value);
     ctx.beginPath();
     ctx.moveTo(pad.left, py);
     ctx.lineTo(width - pad.right, py);
     ctx.stroke();
     ctx.fillText(formatTick(value), 14, py + 5);
-  }
+  });
 
   ctx.strokeStyle = "#17201b";
   ctx.lineWidth = 2;
@@ -399,6 +396,21 @@ function drawGrid(ctx, width, height, pad, tMin, tMax, yMin, yMax, x, y) {
   ctx.moveTo(x(0), pad.top);
   ctx.lineTo(x(0), height - pad.bottom);
   ctx.stroke();
+}
+
+function buildTicks(min, max, important = null, target = null) {
+  const ticks = new Set();
+  const count = 6;
+  for (let i = 0; i <= count; i += 1) {
+    ticks.add(Number((min + (max - min) * (i / count)).toFixed(3)));
+  }
+  if (important !== null && Number.isFinite(important)) {
+    ticks.add(Number(important.toFixed(3)));
+  }
+  if (target !== null && target >= min && target <= max) {
+    ticks.add(Number(target.toFixed(3)));
+  }
+  return [...ticks].sort((a, b) => a - b);
 }
 
 function drawAsymptote(ctx, x, y, tMin, tMax, value) {
@@ -426,6 +438,20 @@ function drawPoint(ctx, px, py, label) {
   ctx.fillStyle = "#8a4d0b";
   ctx.font = "15px Yu Gothic, Meiryo, sans-serif";
   ctx.fillText(label, px + 12, py - 12);
+}
+
+function drawTauGuide(ctx, px, py, zeroY, finalY) {
+  ctx.save();
+  ctx.setLineDash([6, 6]);
+  ctx.strokeStyle = "#8a4d0b";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(px, zeroY);
+  ctx.lineTo(px, py);
+  ctx.moveTo(70, py);
+  ctx.lineTo(px, py);
+  ctx.stroke();
+  ctx.restore();
 }
 
 function clearGraphCanvas() {
