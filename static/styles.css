@@ -24,6 +24,7 @@ body {
 }
 
 button,
+input,
 textarea {
   font: inherit;
 }
@@ -83,7 +84,8 @@ h2 {
 }
 
 .pane-header p,
-.graph-header p {
+.graph-header p,
+.formula-title p {
   color: var(--muted);
   margin-top: 6px;
   font-size: 14px;
@@ -92,7 +94,7 @@ h2 {
 textarea {
   width: 100%;
   flex: 1;
-  min-height: 420px;
+  min-height: 320px;
   resize: none;
   border: 0;
   outline: none;
@@ -102,8 +104,51 @@ textarea {
   background: #fbfcfa;
 }
 
+.formula-panel {
+  padding: 16px 18px;
+  border-top: 1px solid var(--line);
+  background: #fff;
+}
+
+.formula-title {
+  margin-bottom: 12px;
+}
+
+.field {
+  display: grid;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.field input {
+  min-height: 38px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  padding: 0 11px;
+  color: var(--ink);
+  background: #fbfcfa;
+  outline: none;
+}
+
+.field input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(18, 109, 91, 0.12);
+}
+
+.formula-field {
+  margin-bottom: 10px;
+}
+
+.range-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
 .actions,
-.copy-actions {
+.copy-actions,
+.mini-actions {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -112,6 +157,10 @@ textarea {
 .actions {
   padding: 14px 18px;
   border-top: 1px solid var(--line);
+}
+
+.mini-actions {
+  margin-top: 12px;
 }
 
 button {
@@ -152,14 +201,20 @@ svg {
 }
 
 .secondary-button,
+.ghost-button,
 .icon-button {
   background: var(--soft);
   border-color: #d3e3dc;
   color: var(--accent-dark);
 }
 
-.secondary-button {
+.secondary-button,
+.ghost-button {
   padding: 0 16px;
+}
+
+.ghost-button {
+  background: #fff;
 }
 
 .icon-button {
@@ -246,6 +301,6 @@ svg {
 
   textarea,
   .preview {
-    min-height: 340px;
+    min-height: 300px;
   }
 }

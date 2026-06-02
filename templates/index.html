@@ -13,13 +13,43 @@
           <div class="pane-header">
             <div>
               <h1>Word数式ペースト変換</h1>
-              <p>Geminiの回答を貼ると、Word向けの文章・数式・波形に整えます。</p>
+              <p>Geminiの回答や手入力の式から、Word向けの文章・数式・グラフを作ります。</p>
             </div>
             <button class="icon-button" id="clearButton" type="button" title="入力を消す" aria-label="入力を消す">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v5"/><path d="M14 11v5"/></svg>
             </button>
           </div>
+
           <textarea id="sourceText" spellcheck="false" placeholder="ここにGeminiの回答をそのまま貼り付け"></textarea>
+
+          <section class="formula-panel" aria-label="グラフ作成">
+            <div class="formula-title">
+              <h2>数式からグラフ</h2>
+              <p>式を直接入力すると、文章がなくてもグラフを作れます。</p>
+            </div>
+            <label class="field formula-field">
+              <span>式</span>
+              <input id="formulaInput" type="text" value="" placeholder="例: y(t)=1-e^(-2t)">
+            </label>
+            <div class="range-grid">
+              <label class="field">
+                <span>横軸 最小</span>
+                <input id="tMinInput" type="number" value="0" step="0.1">
+              </label>
+              <label class="field">
+                <span>横軸 最大</span>
+                <input id="tMaxInput" type="number" value="8" step="0.1">
+              </label>
+            </div>
+            <div class="mini-actions">
+              <button class="secondary-button" id="plotFormulaButton" type="button">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3v18h18"/><path d="M7 16c2-8 4-8 6 0s4 8 6 0"/></svg>
+                グラフ作成
+              </button>
+              <button class="ghost-button" id="clearFormulaButton" type="button">式を消す</button>
+            </div>
+          </section>
+
           <div class="actions">
             <button class="primary-button" id="convertButton" type="button">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 7H3"/><path d="M18 3l4 4-4 4"/><path d="M3 17h18"/><path d="M6 13l-4 4 4 4"/></svg>
@@ -44,12 +74,14 @@
               </button>
             </div>
           </div>
+
           <article id="preview" class="preview empty">変換後の文章がここに表示されます。</article>
+
           <section class="graph-panel" id="graphPanel" hidden>
             <div class="graph-header">
               <div>
-                <h2>波形グラフ</h2>
-                <p id="graphStatus">計算結果から自動生成します。</p>
+                <h2>グラフ</h2>
+                <p id="graphStatus">計算結果または手入力の式から生成します。</p>
               </div>
               <div class="copy-actions">
                 <button class="icon-button" id="copyGraphButton" type="button" title="グラフをコピー" aria-label="グラフをコピー">
@@ -62,6 +94,7 @@
             </div>
             <canvas id="graphCanvas" width="900" height="520"></canvas>
           </section>
+
           <div id="warnings" class="warnings" hidden></div>
         </div>
       </section>
