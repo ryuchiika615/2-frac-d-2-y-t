@@ -378,6 +378,7 @@ function drawGraph(fn, expression, range) {
   drawGrid(ctx, width, height, pad, tMin, tMax, yMin, yMax, x, y, tauPoint);
   drawAsymptote(ctx, x, y, tMin, tMax, yFinal);
   drawCurve(ctx, samples, x, y);
+  drawOriginLabel(ctx, x, y, tMin, tMax, yMin, yMax);
 
   if (tauPoint && Number.isFinite(tauPoint.y)) {
     drawTauGuide(ctx, x(tauPoint.t), y(tauPoint.y), y(0));
@@ -431,7 +432,7 @@ function drawGrid(ctx, width, height, pad, tMin, tMax, yMin, yMax, x, y, tauPoin
   ctx.font = "15px Yu Gothic, Meiryo, sans-serif";
   ctx.fillStyle = "#667069";
 
-  const xTicks = buildTicks(tMin, tMax, tauPoint ? tauPoint.t : null);
+  const xTicks = buildTicks(tMin, tMax, tauPoint ? tauPoint.t : null, 0);
   xTicks.forEach((t) => {
     const px = x(t);
     ctx.beginPath();
@@ -441,7 +442,7 @@ function drawGrid(ctx, width, height, pad, tMin, tMax, yMin, yMax, x, y, tauPoin
     ctx.fillText(formatTick(t), px - 12, height - pad.bottom + 28);
   });
 
-  const yTicks = buildTicks(yMin, yMax, tauPoint ? tauPoint.y : null);
+  const yTicks = buildTicks(yMin, yMax, tauPoint ? tauPoint.y : null, 0);
   yTicks.forEach((value) => {
     const py = y(value);
     ctx.beginPath();
@@ -456,18 +457,21 @@ function drawGrid(ctx, width, height, pad, tMin, tMax, yMin, yMax, x, y, tauPoin
   ctx.beginPath();
   ctx.moveTo(pad.left, y(0));
   ctx.lineTo(width - pad.right, y(0));
-  ctx.moveTo(x(tMin), pad.top);
-  ctx.lineTo(x(tMin), height - pad.bottom);
+  ctx.moveTo(x(0), pad.top);
+  ctx.lineTo(x(0), height - pad.bottom);
   ctx.stroke();
 }
 
-function buildTicks(min, max, important = null) {
+function buildTicks(min, max, important = null, required = null) {
   const ticks = new Set();
   for (let i = 0; i <= 6; i += 1) {
     ticks.add(Number((min + (max - min) * (i / 6)).toFixed(3)));
   }
   if (important !== null && Number.isFinite(important) && important >= min && important <= max) {
     ticks.add(Number(important.toFixed(3)));
+  }
+  if (required !== null && Number.isFinite(required) && required >= min && required <= max) {
+    ticks.add(Number(required.toFixed(3)));
   }
   return [...ticks].sort((a, b) => a - b);
 }
@@ -497,6 +501,18 @@ function drawPoint(ctx, px, py, label) {
   ctx.fillStyle = "#8a4d0b";
   ctx.font = "15px Yu Gothic, Meiryo, sans-serif";
   ctx.fillText(label, px + 12, py - 12);
+}
+
+function drawOriginLabel(ctx, x, y, tMin, tMax, yMin, yMax) {
+  if (tMin > 0 || tMax < 0 || yMin > 0 || yMax < 0) {
+    return;
+  }
+
+  const px = x(0);
+  const py = y(0);
+  ctx.fillStyle = "#17201b";
+  ctx.font = "15px Yu Gothic, Meiryo, sans-serif";
+  ctx.fillText("0", px - 22, py + 22);
 }
 
 function drawTauGuide(ctx, px, py, zeroY) {
